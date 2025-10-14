@@ -3,12 +3,15 @@ import type { HardhatUserConfig } from "hardhat/config";
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
 import { configVariable } from "hardhat/config";
 
-import { deploy } from "./tasks/index.js"; 
+import { deploy } from "./tasks/index.js";
 
 const config: HardhatUserConfig = {
   plugins: [hardhatToolboxViemPlugin],
   tasks: [deploy],
   solidity: {
+    npmFilesToBuild: [
+      "@openzeppelin/contracts/governance/TimelockController.sol"
+    ],
     profiles: {
       default: {
         version: "0.8.28",
