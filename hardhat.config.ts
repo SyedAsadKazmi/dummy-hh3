@@ -1,13 +1,18 @@
 import type { HardhatUserConfig } from "hardhat/config";
 
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
-import { configVariable } from "hardhat/config";
+import hardhatVerifyPlugin from "@nomicfoundation/hardhat-verify";
 
 import { deploy } from "./tasks/index.js";
+import { deployCounter } from "./tasks/deployCounter.js";
+
+import * as dotenv from "dotenv";
+
+dotenv.config();
 
 const config: HardhatUserConfig = {
-  plugins: [hardhatToolboxViemPlugin],
-  tasks: [deploy],
+  plugins: [hardhatToolboxViemPlugin, hardhatVerifyPlugin],
+  tasks: [deploy, deployCounter],
   solidity: {
     npmFilesToBuild: [
       "@openzeppelin/contracts/governance/TimelockController.sol"
@@ -39,9 +44,21 @@ const config: HardhatUserConfig = {
     sepolia: {
       type: "http",
       chainType: "l1",
-      url: configVariable("SEPOLIA_RPC_URL"),
-      accounts: [configVariable("SEPOLIA_PRIVATE_KEY")],
+      url: process.env.SEPOLIA_RPC_URL || "",
+      accounts: [process.env.ACCOUNT_PRIVATE_KEY || ""],
     },
+    avalancheFuji: {
+      type: "http",
+      chainType: "l1",
+      url: process.env.AVALANCHE_FUJI_RPC_URL || "",
+      accounts: [process.env.ACCOUNT_PRIVATE_KEY || ""],
+    },
+  },
+  verify: {
+    etherscan: {
+      apiKey: process.env.ETHERSCAN_API_KEY || "",
+      enabled: true,
+    }
   },
 };
 
